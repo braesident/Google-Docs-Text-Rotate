@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+  </head>
+
+  <body>
+    <style>
+      /* Google Workspace Sidebar Look */
+      body {
+        font-family: 'Roboto', Arial, sans-serif;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        color: #3c4043;
+        background-color: #ffffff;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      /* Label & Inputs */
+      label {
+        font-weight: 500;
+        color: #5f6368;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      input[type="number"] {
+        padding: 8px 12px;
+        border: 1px solid #dadce0;
+        border-radius: 4px;
+        width: 60px;
+        outline: none;
+        transition: border 0.2s;
+      }
+
+      input[type="number"]:focus {
+        border: 2px solid #1a73e8;
+        padding: 7px 11px;
+      }
+
+      /* Button Styling */
+      .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      button {
+        font-family: 'Google Sans', Roboto, Arial, sans-serif;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s;
+        border: 1px solid transparent;
+        text-align: center;
+      }
+
+      /* Primär-Button (Vorschau/Aktion) */
+      .btn-primary {
+        background: #1a73e8;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #1765cc;
+        box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+      }
+
+      /* Sekundär-Button (Direkt einfügen) */
+      .btn-secondary {
+        background: white;
+        color: #1a73e8;
+        border: 1px solid #dadce0;
+      }
+
+      .btn-secondary:hover {
+        background: #f8f9fa;
+      }
+
+      /* Einfügen-Button (Erfolg) */
+      #insert-btn {
+        background: #1e8e3e;
+        color: white;
+        margin-top: 12px;
+        width: 100%;
+        display: none;
+      }
+
+      #insert-btn:hover {
+        background: #188038;
+      }
+
+      /* Vorschau Container */
+      #preview-container {
+        margin-top: 8px;
+        padding: 16px;
+        border: 1px dashed #dadce0;
+        border-radius: 8px;
+        text-align: center;
+        background: #f1f3f4;
+        min-height: 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #preview-img {
+        max-width: 90%;
+        max-height: 200px;
+        background: white;
+        padding: 4px;
+        border: 1px solid #ddd;
+        display: none;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      #preview-label {
+        color: #70757a;
+        font-style: italic;
+      }
+
+      /* Status-Animation */
+      #status-message {
+        display: none;
+        color: #1a73e8;
+        font-weight: 500;
+        text-align: center;
+        padding: 8px;
+        background: #e8f0fe;
+        border-radius: 4px;
+      }
+
+      hr {
+        border: 0;
+        border-top: 1px solid #eee;
+        margin: 8px 0;
+      }
+
+      .input-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      /* Gemeinsames Button-Styling */
+      .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background 0.2s;
+        padding: 0;
+      }
+
+      .material-symbols-outlined {
+        font-size: 20px;
+        user-select: none;
+      }
+    </style>
+
+    <label for="rotate-extension-degrees">Drehen</label>
+    <div class="input-row">
+      <div style="display: flex; align-items: center;">
+        <input type="number" id="rotate-extension-degrees" value="90" style="width: 45px;">
+        <span style="margin-left: 4px;">°</span>
+      </div>
+
+      <div style="display: flex; gap: 4px;">
+        <!-- Drehen & Einfügen -->
+        <button class="btn-icon btn-primary" onclick="startRotationProcess()" title="Sofort drehen">
+          <span class="material-symbols-outlined">rotate_right</span>
+        </button>
+        <!-- Vorschau Drehen -->
+        <button class="btn-icon btn-secondary" onclick="process('rotate')" title="Vorschau">
+          <span class="material-symbols-outlined">visibility</span>
+        </button>
+      </div>
+    </div>
+
+    <hr>
+
+    <p>Untereinander</p>
+    <div class="input-row" style="justify-content: flex-start; gap: 8px;">
+      <!-- Vertikal & Einfügen -->
+      <button class="btn-icon btn-primary" onclick="startVerticalProcess()" title="Vertikal einfügen">
+        <span class="material-symbols-outlined">
+          text_rotate_vertical
+        </span>
+      </button>
+      <!-- Vorschau Vertikal -->
+      <button class="btn-icon btn-secondary" onclick="process('vertical')" title="Vorschau">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+    </div>
+
+    <hr>
+
+    <div id="status-message"
+      style="display:none; color: #4285f4; font-weight: bold; text-align: center; margin-top: 10px;">
+      🔄 Wird eingefügt...
+    </div>
+
+    <div id="preview-container">
+      <small id="preview-label">Vorschau erscheint hier...</small>
+      <img id="preview-img" src="" />
+      <button id="insert-btn" onclick="sendToDoc()">Bild jetzt einfügen</button>
+    </div>
+
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <hr>
+
+    <button class="btn-primary" onclick="google.script.run.restoreTextFromImage()" title="Bild zu Text">
+      <span class="material-symbols-outlined">settings_backup_restore</span>
+      Bild &RightArrow; Text
+    </button>
+
+    <script>
+      let currentBase64 = "";
+      let currentTargetWidth = 0;
+      let currentTargetHeight = 0;
+      let currentFormatData = "";
+
+      function process(type, isDirect = false) {
+        google.script.run.withSuccessHandler(function (data) {
+          console.log('TEXT', data);
+          if (!data) return alert("Bitte Text markieren!");
+          currentFormatData = data;
+
+          if (type === 'rotate') {
+            const deg = parseInt(document.getElementById('rotate-extension-degrees').value);
+            generateImage(data, 'rotate', deg, isDirect);
+          } else {
+            generateImage(data, 'vertical', 0, isDirect);
+          }
+        }).getSelectedText();
+      }
+
+      function startRotationProcess() { process('rotate', true); }
+      function startVerticalProcess() { process('vertical', true); }
+
+      function generateImage(data, mode, degrees, isDirect) {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        const baseFontSize = 20;
+        const scaleFactor = 4;
+        const fontSize = baseFontSize * scaleFactor;
+
+        let fontStyle = "";
+        if (data.isBold) fontStyle += "bold ";
+        if (data.isItalic) fontStyle += "italic ";
+        ctx.font = fontStyle + fontSize + "px " + data.fontFamily;
+        console.log('CTX', ctx.font);
+        if (mode === 'rotate') {
+          const textWidth = ctx.measureText(data.text).width;
+          const angleRad = (degrees * Math.PI) / 180;
+          const absCos = Math.abs(Math.cos(angleRad));
+          const absSin = Math.abs(Math.sin(angleRad));
+
+          canvas.width = textWidth * absCos + fontSize * absSin + (20 * scaleFactor);
+          canvas.height = textWidth * absSin + fontSize * absCos + (20 * scaleFactor);
+
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.rotate(-angleRad);
+          ctx.fillStyle = data.color;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.font = fontStyle + fontSize + "px " + data.fontFamily;
+          ctx.fillText(data.text, 0, 0);
+        }
+        else if (mode === 'vertical') {
+          const spacing = 1.2;
+          const spaceGap = 0.4;
+
+          const chars = data.text.split('');
+          let maxWidth = 0;
+          let totalH = 0;
+
+          chars.forEach(c => {
+            maxWidth = Math.max(maxWidth, ctx.measureText(c).width);
+            totalH += (c === ' ') ? (fontSize * spaceGap) : (fontSize * spacing);
+          });
+
+          canvas.width = maxWidth + (15 * scaleFactor);
+          canvas.height = totalH + (15 * scaleFactor);
+
+          ctx.fillStyle = data.color;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "top";
+          ctx.font = fontStyle + fontSize + "px " + data.fontFamily;
+
+          let y = 7 * scaleFactor;
+          chars.forEach(c => {
+            if (c !== ' ') {
+              ctx.fillText(c, canvas.width / 2, y);
+              y += fontSize * spacing;
+            } else {
+              y += fontSize * spaceGap;
+            }
+          });
+        }
+
+        const dataUrl = canvas.toDataURL("image/png");
+        const calculatedWidth = canvas.width / scaleFactor;
+        const calculatedHeight = canvas.height / scaleFactor;
+
+        if (isDirect) {
+          sendToDoc(dataUrl, calculatedWidth, calculatedHeight);
+        } else {
+          document.getElementById('preview-img').style.background = data.background;
+          showPreview(dataUrl, calculatedWidth, calculatedHeight);
+        }
+      }
+
+      function resetUI() {
+        currentBase64 = "";
+        document.getElementById('preview-img').style.display = "none";
+        document.getElementById('preview-img').src = "";
+        document.getElementById('preview-label').style.display = "block";
+        document.getElementById('insert-btn').style.display = "none";
+        toggleLoading(false);
+      }
+
+      function showPreview(dataUrl, targetWidth, targetHeight) {
+        currentBase64 = dataUrl;
+        currentTargetWidth = targetWidth;
+        currentTargetHeight = targetHeight;
+        const img = document.getElementById('preview-img');
+        img.src = dataUrl;
+        img.style.display = "block";
+        document.getElementById('preview-label').style.display = "none";
+        document.getElementById('insert-btn').style.display = "block";
+      }
+
+      function sendToDoc(dataUrl, targetWidth, targetHeight) {
+        const finalData = dataUrl || currentBase64;
+        const finalWidth = targetWidth || currentTargetWidth;
+        const finalHeight = targetHeight || currentTargetHeight;
+
+        if (!finalData) return;
+
+        toggleLoading(true);
+
+        google.script.run
+          .withSuccessHandler(() => resetUI())
+          .insertRotatedImage(finalData, finalWidth, finalHeight, currentFormatData);
+      }
+
+      function toggleLoading(isLoading) {
+        const status = document.getElementById('status-message');
+        const buttons = document.querySelectorAll('button');
+
+        if (isLoading) {
+          status.style.display = "block";
+          buttons.forEach(btn => btn.disabled = true);
+          buttons.forEach(btn => btn.style.opacity = "0.5");
+        } else {
+          status.style.display = "none";
+          buttons.forEach(btn => btn.disabled = false);
+          buttons.forEach(btn => btn.style.opacity = "1");
+        }
+      }
+    </script>
+  </body>
+
+</html>
